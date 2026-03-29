@@ -1,0 +1,59 @@
+{
+  "rapport_compression": {
+    "image_originale": {
+      "nom_image": "image_173234",
+      "resolution": "1366x768",
+      "taille_ko": 519.41,
+      "type_detecte": "screenshot",
+      "format_original": "PNG",
+      "entropie": 5.1986,
+      "densite_contours": 170132,
+      "contient_texte": false
+    },
+    "decision_ia": {
+      "format_choisi": "WEBP",
+      "qualite_choisie": 85,
+      "justification": "Sélectionné par Comparateur — meilleur ratio Q/T (0.8922) parmi 2 stratégies testées",
+      "source": "Comparateur (validé)",
+      "decision_pertinente": true,
+      "niveau_pertinence": "Élevée"
+    },
+    "metriques_qualite": {
+      "1_psnr_db": 31.25,
+      "2_ssim": 0.9747,
+      "3_mse": 48.777,
+      "4_taux_compression_pct": 76.84,
+      "5_ratio_qualite_taille": 0.8922,
+      "evaluation": "Excellent",
+      "interpretation": {
+        "psnr": "Très bonne qualité",
+        "ssim": "Structure préservée",
+        "mse": "Faible erreur",
+        "gain": "Excellent"
+      }
+    },
+    "compression_appliquee": {
+      "taille_originale_ko": 519.41,
+      "taille_compressee_ko": 120.29,
+      "ratio_compression": 4.32,
+      "gain_pourcentage": 76.84,
+      "format_utilise": "WEBP",
+      "qualite_utilisee": 85,
+      "qualite_ajustee": false,
+      "nb_retries": 0
+    },
+    "analyse_categorie": {
+      "type": "screenshot",
+      "recommandation_theorique": "PNG ou WebP sans perte (conserve les détails)",
+      "recommandation_appliquee": "WEBP q=85",
+      "pertinence": "Élevée",
+      "respecte_recommandation": true
+    },
+    "fichiers_generes": {
+      "gauge": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\image_173234_20260318_173234\\ssim_gauge.png",
+      "metrics_chart": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\image_173234_20260318_173234\\metrics_chart.png"
+    },
+    "conclusion": "Compression Excellent — 76.8% économisé. PSNR=31.25 dB | SSIM=0.9747 | MSE=48.78. Décision IA élevée — ✓ pertinente.",
+    "date_analyse": "2026-03-18 17:32:35"
+  }
+}

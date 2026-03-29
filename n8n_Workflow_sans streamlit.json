@@ -1,0 +1,365 @@
+{
+  "name": "WORKFLOW SAMEDI FINALE SANS STREAMLIT copy",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/agent/executeur",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_path",
+              "value": "C:\\\\Users\\\\Lenovo ThinkPad T470\\\\OneDrive\\\\Documents\\\\Bureau\\\\Projet_Compression\\\\database-projet\\\\documents\\\\doc_1.png"
+            },
+            {
+              "name": "format",
+              "value": "={{ $json.meilleure_decision.format }}"
+            },
+            {
+              "name": "quality",
+              "value": "={{ $json.meilleure_decision.quality }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1488,
+        0
+      ],
+      "id": "457f0d6e-2f74-4a2d-8d08-b3c571e7bac9",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/agent/analyste",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"image_path\": \"C:\\\\Users\\\\Lenovo ThinkPad T470\\\\OneDrive\\\\Documents\\\\Bureau\\\\Projet_Compression\\\\database-projet\\\\photos\\\\photo_1.jpg\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        48,
+        0
+      ],
+      "id": "ab989f9c-99fe-4f98-a2fb-43cbb5fda8d6",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/agent/rapporteur",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=features",
+              "value": "={{ $('HTTP Request1').item.json.features }}"
+            },
+            {
+              "name": "=llm_decision",
+              "value": "={{ $('Code in JavaScript').item.json }}"
+            },
+            {
+              "name": "compressed_b64",
+              "value": "={{ $('HTTP Request').item.json.compressed_image_base64 }}"
+            },
+            {
+              "name": "original_b64",
+              "value": "={{ $('HTTP Request').item.json.original_image_base64 }}"
+            },
+            {
+              "name": "format_used",
+              "value": "={{ $('HTTP Request').item.json.format_used }}"
+            },
+            {
+              "name": "quality_used",
+              "value": "={{ $('HTTP Request').item.json.quality_used }}"
+            },
+            {
+              "name": "nom_image",
+              "value": "={{ $('HTTP Request1').item.json.features.metadonnees.nom_fichier }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1680,
+        0
+      ],
+      "id": "c0f02df2-b3e0-41ae-9bcb-d7267466319c",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        0
+      ],
+      "id": "75d3c51a-bcb5-4775-b826-e47fbd16f293",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Voici les caractéristiques JSON de l'image : {{ JSON.stringify($json) }}\n\nAnalyse et choisis la meilleure stratégie de compression en privilégiant la qualité visuelle.\n\nRéponds UNIQUEMENT avec le JSON demandé.",
+        "options": {
+          "systemMessage": "Tu es un expert en compression d’images.\n\nAnalyse les caractéristiques fournies et décide toi-même du meilleur format et de la meilleure qualité.\n\n🎯 OBJECTIF :\nMaximiser la qualité visuelle tout en restant cohérent avec le type d’image.\n\n⚠️ IMPORTANT :\n- Ne suis pas des règles fixes\n- Analyse intelligemment les données\n- Explique ton choix brièvement\n\n📌 FORMAT DE SORTIE :\n{\n  \"format\": \"...\",\n  \"qualite\": ...,\n  \"justification\": \"...\",\n  \"pertinence\": \"élevée\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        464,
+        0
+      ],
+      "id": "ba81d39c-0b8c-4b13-a97f-869e1255415e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tu es un expert en compression d’images orienté optimisation et performance.\n\n🎯 OBJECTIF :\nRéduire au maximum la taille du fichier tout en gardant une qualité acceptable.\n\n⚠️ IMPORTANT :\n- Tu dois proposer une alternative différente du choix classique (PNG ou qualité max)\n- Ne donne PAS toujours la même réponse\n\n📌 RÈGLES INTELLIGENTES :\n- type_image = \"photo\" → privilégier JPEG ou WebP (qualité 70-85)\n- presence_texte = true → PNG recommandé MAIS WebP possible si taille élevée\n- type_image = \"screenshot\" → PNG ou WebP selon taille\n- type_image = \"graphique\" → PNG ou WebP\n- taille_kb > 1000 → privilégier WebP\n- taille_kb < 800 → éviter WebP\n- complexite faible → réduire qualité possible\n\n📌 INTERPRÉTATION :\n- Chercher compromis taille / qualité\n- Accepter une légère perte de qualité\n\n📤 FORMAT DE SORTIE (OBLIGATOIRE) :\n{\n  \"format\": \"...\",\n  \"qualite\": ...,\n  \"justification\": \"...\",\n  \"pertinence\": \"moyenne\"\n}",
+        "options": {
+          "systemMessage": "Tu es un expert en compression d’images orienté optimisation.\n\nAnalyse les caractéristiques et propose une stratégie différente si possible.\n\n🎯 OBJECTIF :\nRéduire la taille du fichier tout en gardant une qualité acceptable.\n\n⚠️ IMPORTANT :\n- Ne suis pas des règles fixes\n- Essaie de proposer une alternative différente\n- Réfléchis comme un système intelligent\n\n📌 FORMAT DE SORTIE :\n{\n  \"format\": \"...\",\n  \"qualite\": ...,\n  \"justification\": \"...\",\n  \"pertinence\": \"moyenne\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        992,
+        0
+      ],
+      "id": "edf93f8d-f8b9-4d19-8390-2fb6097dadf2",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "llama-3.3-70b-versatile",
+          "mode": "id"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        256
+      ],
+      "id": "63c0fd6d-8344-4fa9-b6c2-955534297e9a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ttEi8EuqCJyzYajM",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "llama-3.1-8b-instant",
+          "mode": "id"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        992,
+        256
+      ],
+      "id": "0982504e-6855-4771-8cd8-ab8bb22e0c75",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ttEi8EuqCJyzYajM",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst f = data.features;\n\nconst features_clean = {\n  type_image: f.type_image,\n  taille_kb: f.metadonnees.taille_kb,\n  format_original: f.metadonnees.format,\n  entropy: f.features_statistiques.entropy,\n  contient_texte: f.ocr.contient_texte,\n  ratio_complexite: f.morphologie.ratio_complexite\n};\n\nconst safe = JSON.stringify(features_clean).replace(/[^\\x00-\\x7F]/g, \"\");\n\nreturn [{ json: JSON.parse(safe) }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        0
+      ],
+      "id": "4499a7c2-4f7d-4162-8816-e616e7436501",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "function extractJSON(rawOutput) {\n  if (typeof rawOutput !== \"string\") return rawOutput;\n  \n  const match = rawOutput.match(/\\{[\\s\\S]*\"format\"[\\s\\S]*\\}/);\n  if (!match) return {};\n  \n  try {\n    const cleaned = match[0]\n      .replace(/\\\\n/g, ' ')\n      .replace(/\\\\\"/g, '\"')\n      .replace(/\\s+/g, ' ');\n    return JSON.parse(cleaned);\n  } catch {\n    return {\n      format: rawOutput.match(/\"format\":\\s*\"([^\"]+)\"/)?.[1] || '',\n      qualite: parseInt(rawOutput.match(/\"qualite\":\\s*(\\d+)/)?.[1] || '0'),\n      justification: rawOutput.match(/\"justification\":\\s*\"([^\"]+)\"/)?.[1] || '',\n      pertinence: rawOutput.match(/\"pertinence\":\\s*\"([^\"]+)\"/)?.[1] || ''\n    };\n  }\n}\n\nconst llm1 = extractJSON($('AI Agent').item.json.output);\nconst llm2 = extractJSON($('AI Agent1').item.json.output);\n\nfunction score(p) {\n  if (!p) return 0;\n  p = p.toLowerCase();\n  if (p.includes(\"élevée\")) return 3;\n  if (p.includes(\"moyenne\")) return 2;\n  if (p.includes(\"faible\")) return 1;\n  return 0;\n}\n\nfunction formatScore(format) {\n  if (!format) return 0;\n  format = format.toLowerCase();\n  if (format === \"avif\") return 4;\n  if (format === \"webp\") return 3;\n  if (format === \"jpeg\") return 2;\n  if (format === \"png\") return 1;\n  return 0;\n}\n\nconst score1 = score(llm1.pertinence);\nconst score2 = score(llm2.pertinence);\n\nlet decision, source, raison;\n\nif (score1 > score2) {\n  decision = llm1; source = \"LLM1\"; raison = \"Pertinence plus élevée\";\n} else if (score2 > score1) {\n  decision = llm2; source = \"LLM2\"; raison = \"Pertinence plus élevée\";\n} else {\n  const f1 = formatScore(llm1.format);\n  const f2 = formatScore(llm2.format);\n  if (f1 >= f2) {\n    decision = llm1; source = \"LLM1\"; raison = \"Format plus optimisé\";\n  } else {\n    decision = llm2; source = \"LLM2\"; raison = \"Format plus optimisé\";\n  }\n}\n\nreturn [{\n  json: {\n    decision_finale: {\n      format: decision.format,\n      qualite: decision.qualite\n    },\n    source,\n    raison,\n    detail: { llm1, llm2 }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        0
+      ],
+      "id": "259bdd09-9306-4213-ae07-2e8d88fb2b57",
+      "name": "comparateur"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawOutput = $input.item.json.output;\n\nfunction extractJSON(raw) {\n  if (typeof raw !== \"string\") return raw;\n  const match = raw.match(/\\{[\\s\\S]*\"format\"[\\s\\S]*\\}/);\n  if (!match) return {};\n  try {\n    const cleaned = match[0].replace(/\\\\n/g, ' ').replace(/\\\\\"/g, '\"').replace(/\\s+/g, ' ');\n    return JSON.parse(cleaned);\n  } catch {\n    return {\n      format: raw.match(/\"format\":\\s*\"([^\"]+)\"/)?.[1] || '',\n      qualite: parseInt(raw.match(/\"qualite\":\\s*(\\d+)/)?.[1] || '0'),\n      justification: raw.match(/\"justification\":\\s*\"([^\"]+)\"/)?.[1] || '',\n      pertinence: raw.match(/\"pertinence\":\\s*\"([^\"]+)\"/)?.[1] || ''\n    };\n  }\n}\n\nconst result = extractJSON(rawOutput);\nreturn { json: result };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        0
+      ],
+      "id": "1d902912-94f8-4e39-af49-ecc72ec7f8d3",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "comparateur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "comparateur": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "db4ae590-9f5d-4758-b49f-1b08f967bf09",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "64f521483b3a800522eb66f08878601de1c374a7f9e05f448b893b39cbe7f3c2"
+  },
+  "id": "AbaojnUZuaWoiDs2",
+  "tags": []
+}

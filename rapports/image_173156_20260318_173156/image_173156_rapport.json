@@ -1,0 +1,59 @@
+{
+  "rapport_compression": {
+    "image_originale": {
+      "nom_image": "image_173156",
+      "resolution": "1366x768",
+      "taille_ko": 94.49,
+      "type_detecte": "document",
+      "format_original": "PNG",
+      "entropie": 2.8081,
+      "densite_contours": 107628,
+      "contient_texte": false
+    },
+    "decision_ia": {
+      "format_choisi": "WEBP",
+      "qualite_choisie": 85,
+      "justification": "Sélectionné par Comparateur — meilleur ratio Q/T (0.6839) parmi 2 stratégies testées",
+      "source": "Comparateur (validé)",
+      "decision_pertinente": false,
+      "niveau_pertinence": "Moyenne"
+    },
+    "metriques_qualite": {
+      "1_psnr_db": 33.75,
+      "2_ssim": 0.9769,
+      "3_mse": 27.4082,
+      "4_taux_compression_pct": 24.45,
+      "5_ratio_qualite_taille": 0.6839,
+      "evaluation": "Excellent",
+      "interpretation": {
+        "psnr": "Très bonne qualité",
+        "ssim": "Structure préservée",
+        "mse": "Faible erreur",
+        "gain": "Faible"
+      }
+    },
+    "compression_appliquee": {
+      "taille_originale_ko": 94.49,
+      "taille_compressee_ko": 71.39,
+      "ratio_compression": 1.32,
+      "gain_pourcentage": 24.45,
+      "format_utilise": "WEBP",
+      "qualite_utilisee": 85,
+      "qualite_ajustee": false,
+      "nb_retries": 0
+    },
+    "analyse_categorie": {
+      "type": "document",
+      "recommandation_theorique": "WebP qualité 85",
+      "recommandation_appliquee": "WEBP q=85",
+      "pertinence": "Moyenne",
+      "respecte_recommandation": false
+    },
+    "fichiers_generes": {
+      "gauge": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\image_173156_20260318_173156\\ssim_gauge.png",
+      "metrics_chart": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\image_173156_20260318_173156\\metrics_chart.png"
+    },
+    "conclusion": "Compression Excellent — 24.4% économisé. PSNR=33.75 dB | SSIM=0.9769 | MSE=27.41. Décision IA moyenne — ✗ à revoir.",
+    "date_analyse": "2026-03-18 17:31:58"
+  }
+}

@@ -1,0 +1,457 @@
+{
+  "name": "daba",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/agent/executeur",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_base64",
+              "value": "={{ $('Webhook').item.json.body.image_base64 }}"
+            },
+            {
+              "name": "format",
+              "value": "={{ $('comparateur').item.json.decision_finale.format }}"
+            },
+            {
+              "name": "quality",
+              "value": "={{ $('comparateur').item.json.decision_finale.qualite }}"
+            },
+            {
+              "name": "filename",
+              "value": "={{ $json.filename }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "ef2fffff-a411-4f06-953b-5200e86b4553",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/agent/analyste",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_base64",
+              "value": "={{$json.body.image_base64}}"
+            },
+            {
+              "name": "filename",
+              "value": "={{$json.body.filename}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        288,
+        0
+      ],
+      "id": "021f67c5-8603-4128-bfa0-54c97532ffd8",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/agent/rapporteur",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=features",
+              "value": "={{ $('HTTP Request1').item.json.features }}"
+            },
+            {
+              "name": "=llm_decision",
+              "value": "={{ $('Code in JavaScript').item.json }}"
+            },
+            {
+              "name": "compressed_b64",
+              "value": "={{ $('HTTP Request').item.json.compressed_image_base64 }}"
+            },
+            {
+              "name": "original_b64",
+              "value": "={{ $('HTTP Request').item.json.original_image_base64 }}"
+            },
+            {
+              "name": "format_used",
+              "value": "={{ $('HTTP Request').item.json.format_used }}"
+            },
+            {
+              "name": "quality_used",
+              "value": "={{ $('HTTP Request').item.json.quality_used }}"
+            },
+            {
+              "name": "nom_image",
+              "value": "={{ $('HTTP Request1').item.json.features.metadonnees.nom_fichier }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2128,
+        0
+      ],
+      "id": "2955f0c2-7b83-4931-9caa-a14fa5bd17d3",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Voici les caractéristiques JSON de l'image : {{ JSON.stringify($json) }}\n\nAnalyse et choisis la meilleure stratégie de compression en privilégiant la qualité visuelle.\n\nRéponds UNIQUEMENT avec le JSON demandé.",
+        "options": {
+          "systemMessage": "Tu es un expert en compression d’images.\n\nAnalyse les caractéristiques fournies et décide toi-même du meilleur format et de la meilleure qualité.\n\n🎯 OBJECTIF :\nMaximiser la qualité visuelle tout en restant cohérent avec le type d’image.\n\n⚠️ IMPORTANT :\n- Ne suis pas des règles fixes\n- Analyse intelligemment les données\n- Explique ton choix brièvement\n\n📌 FORMAT DE SORTIE :\n{\n  \"format\": \"...\",\n  \"qualite\": ...,\n  \"justification\": \"...\",\n  \"pertinence\": \"élevée\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        704,
+        0
+      ],
+      "id": "0b7463eb-58f6-4c13-b1e1-7e1353106768",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tu es un expert en compression d’images orienté optimisation et performance.\n\n🎯 OBJECTIF :\nRéduire au maximum la taille du fichier tout en gardant une qualité acceptable.\n\n⚠️ IMPORTANT :\n- Tu dois proposer une alternative différente du choix classique (PNG ou qualité max)\n- Ne donne PAS toujours la même réponse\n\n📌 RÈGLES INTELLIGENTES :\n- type_image = \"photo\" → privilégier JPEG ou WebP (qualité 70-85)\n- presence_texte = true → PNG recommandé MAIS WebP possible si taille élevée\n- type_image = \"screenshot\" → PNG ou WebP selon taille\n- type_image = \"graphique\" → PNG ou WebP\n- taille_kb > 1000 → privilégier WebP\n- taille_kb < 800 → éviter WebP\n- complexite faible → réduire qualité possible\n\n📌 INTERPRÉTATION :\n- Chercher compromis taille / qualité\n- Accepter une légère perte de qualité\n\n📤 FORMAT DE SORTIE (OBLIGATOIRE) :\n{\n  \"format\": \"...\",\n  \"qualite\": ...,\n  \"justification\": \"...\",\n  \"pertinence\": \"moyenne\"\n}",
+        "options": {
+          "systemMessage": "Tu es un expert en compression d’images orienté optimisation.\n\nAnalyse les caractéristiques et propose une stratégie différente si possible.\n\n🎯 OBJECTIF :\nRéduire la taille du fichier tout en gardant une qualité acceptable.\n\n⚠️ IMPORTANT :\n- Ne suis pas des règles fixes\n- Essaie de proposer une alternative différente\n- Réfléchis comme un système intelligent\n\n📌 FORMAT DE SORTIE :\n{\n  \"format\": \"...\",\n  \"qualite\": ...,\n  \"justification\": \"...\",\n  \"pertinence\": \"moyenne\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1232,
+        0
+      ],
+      "id": "c2e50c0d-fd4f-40ce-bbf3-b495ce197645",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "llama-3.1-8b-instant",
+          "mode": "id"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        240
+      ],
+      "id": "febb66b9-75c6-49e1-82f9-cdee9e401d28",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "aEinbJ4jQpAwgGIz",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "llama-3.3-70b-versatile",
+          "mode": "id"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1232,
+        256
+      ],
+      "id": "3a7c115b-a07a-40bc-a28a-cc96a656c0f6",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "aEinbJ4jQpAwgGIz",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst f = data.features;\n\nconst features_clean = {\n  type_image: f.type_image,\n  taille_kb: f.metadonnees.taille_kb,\n  format_original: f.metadonnees.format,\n  entropy: f.features_statistiques.entropy,\n  contient_texte: f.ocr.contient_texte,\n  ratio_complexite: f.morphologie.ratio_complexite\n};\n\nconst safe = JSON.stringify(features_clean).replace(/[^\\x00-\\x7F]/g, \"\");\n\nreturn [{ json: JSON.parse(safe) }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        0
+      ],
+      "id": "e712c31c-3ed3-4d88-a854-237aeaa7ef2f",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const agent1 = $('Code in JavaScript').first().json;   // Décideur\nconst agent2 = $input.first().json;                     // Comparateur (AI Agent1)\n\nfunction extractJSON(raw) {\n  if (typeof raw !== \"string\") return raw || {};\n  const match = raw.match(/\\{[\\s\\S]*\"format\"[\\s\\S]*\\}/);\n  if (!match) return {};\n  try {\n    return JSON.parse(match[0].replace(/\\\\n/g,' ').replace(/\\\\\"/g,'\"').replace(/\\s+/g,' '));\n  } catch {\n    return {\n      format: raw.match(/\"format\":\\s*\"([^\"]+)\"/)?.[1] || 'WEBP',\n      qualite: parseInt(raw.match(/\"qualite\":\\s*(\\d+)/)?.[1] || '85'),\n    };\n  }\n}\n\nconst dec1 = agent1; // déjà parsé par Code in JavaScript\nconst dec2 = extractJSON(agent2.output);\n\n// Choisir la meilleure décision\nconst score = (d) => {\n  const pertinence = (d.pertinence || \"\").toLowerCase();\n  if (pertinence.includes(\"élev\")) return 2;\n  if (pertinence.includes(\"moyen\")) return 1;\n  return 0;\n};\n\nconst meilleure = score(dec1) >= score(dec2) ? dec1 : dec2;\n\nreturn [{\n  json: {\n    decision_finale: {\n      format: (meilleure.format || \"WEBP\").toUpperCase(),\n      qualite: parseInt(meilleure.qualite || meilleure.quality || 85),\n      justification: meilleure.justification || \"\"\n    },\n    raison: score(dec1) >= score(dec2) ? \"Agent Décideur choisi\" : \"Agent Comparateur choisi\",\n    detail: { llm1: dec1, llm2: dec2 }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        0
+      ],
+      "id": "b00b8de0-6929-4ba5-bacf-a4d9e471478f",
+      "name": "comparateur"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawOutput = $input.item.json.output;\n\nfunction extractJSON(raw) {\n  if (typeof raw !== \"string\") return raw;\n  const match = raw.match(/\\{[\\s\\S]*\"format\"[\\s\\S]*\\}/);\n  if (!match) return {};\n  try {\n    const cleaned = match[0].replace(/\\\\n/g, ' ').replace(/\\\\\"/g, '\"').replace(/\\s+/g, ' ');\n    return JSON.parse(cleaned);\n  } catch {\n    return {\n      format: raw.match(/\"format\":\\s*\"([^\"]+)\"/)?.[1] || '',\n      qualite: parseInt(raw.match(/\"qualite\":\\s*(\\d+)/)?.[1] || '0'),\n      justification: raw.match(/\"justification\":\\s*\"([^\"]+)\"/)?.[1] || '',\n      pertinence: raw.match(/\"pertinence\":\\s*\"([^\"]+)\"/)?.[1] || ''\n    };\n  }\n}\n\nconst result = extractJSON(rawOutput);\nreturn { json: result };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        0
+      ],
+      "id": "41d6df0b-d6d7-4848-b70a-fd867a10e28a",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "compression-pipeline",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e3dca81d-6d53-4aa5-ac40-654108528471",
+      "name": "Webhook",
+      "webhookId": "776012a4-5c25-4c02-b527-7a65821c7e8c"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2544,
+        0
+      ],
+      "id": "a992bddc-6dc3-4e37-aa85-b69eaa698618",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Récupérer les outputs de chaque agent ──────────────\nconst analyste    = $('HTTP Request1').first().json;\nconst decideur    = $('AI Agent').first().json;\nconst comparateur = $('comparateur').first().json;\nconst executeur   = $('HTTP Request').first().json;\nconst rapporteur  = $('HTTP Request2').first().json;\n\n// ── Parser l'output de l'AI Agent (string → JSON) ──────\nfunction extractJSON(raw) {\n  if (typeof raw !== \"string\") return raw || {};\n  const match = raw.match(/\\{[\\s\\S]*\"format\"[\\s\\S]*\\}/);\n  if (!match) return {};\n  try {\n    return JSON.parse(match[0].replace(/\\\\n/g,' ').replace(/\\\\\"/g,'\"').replace(/\\s+/g,' '));\n  } catch {\n    return {\n      format: raw.match(/\"format\":\\s*\"([^\"]+)\"/)?.[1] || '',\n      qualite: parseInt(raw.match(/\"qualite\":\\s*(\\d+)/)?.[1] || '0'),\n      justification: raw.match(/\"justification\":\\s*\"([^\"]+)\"/)?.[1] || '',\n      pertinence: raw.match(/\"pertinence\":\\s*\"([^\"]+)\"/)?.[1] || ''\n    };\n  }\n}\n\nconst decideurParsed = extractJSON(decideur.output);\n\n// ── Décision finale (depuis comparateur) ───────────────\nconst decisionFinale = {\n  format_choisi: comparateur.decision_finale?.format || decideurParsed.format || \"\",\n  qualite: comparateur.decision_finale?.qualite || decideurParsed.qualite || 85,\n  raison: comparateur.raison || \"\",\n  justification: comparateur.detail?.llm2?.justification || decideurParsed.justification || \"\"\n};\n\n// ── Construire réponse complète ─────────────────────────\nconst response = {\n  status:            \"success\",\n  features: analyste.features || analyste || {},\n\n  decision_initiale: {\n    format_choisi: decideurParsed.format || \"\",\n    qualite: decideurParsed.qualite || \"\",\n    justification: decideurParsed.justification || \"\"\n  },\n  decision_finale:   decisionFinale,\n  decision_changee:  decideurParsed.format !== decisionFinale.format_choisi,\n  metrics:           rapporteur.metrics || rapporteur || {},\n  compressed_b64:    executeur.compressed_b64 || executeur.compressed_image_base64 || \"\",\n  rapport:           rapporteur.rapport || {},\n  fichiers:          rapporteur.fichiers || {}\n};\n\nconsole.log(\"✅ Status:\", response.status);\nconsole.log(\"✅ compressed_b64 length:\", response.compressed_b64?.length || 0);\nconsole.log(\"✅ metrics:\", JSON.stringify(response.metrics).substring(0, 100));\n\nreturn [{ json: response }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2336,
+        0
+      ],
+      "id": "12ae07e9-9c44-4fe3-b9f6-aa5538848f70",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupérer image_base64 depuis le Webhook original\nconst image_base64 = $('Webhook').first().json.body.image_base64;\nconst filename     = $('Webhook').first().json.body.filename;\nconst decision     = $('comparateur').first().json.decision_finale || {};\n\nlet format  = (decision.format  || \"WEBP\").toUpperCase();\nlet qualite = parseFloat(decision.qualite || 85);\nif (qualite <= 1.0) qualite = Math.round(qualite * 100);\nelse qualite = Math.round(qualite);\nif (isNaN(qualite)) qualite = 85;\n\nreturn [{ json: { image_base64, filename, format, quality: qualite } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "be68dd3e-b77a-49ce-ace1-53b6eefc7383",
+      "name": "Code in JavaScript3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "comparateur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "comparateur": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ed52c2c2-c585-48d7-afb3-3e3de55996db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "64f521483b3a800522eb66f08878601de1c374a7f9e05f448b893b39cbe7f3c2"
+  },
+  "id": "7klZFN8iKVGokq3T",
+  "tags": []
+}

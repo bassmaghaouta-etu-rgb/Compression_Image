@@ -1,0 +1,59 @@
+{
+  "rapport_compression": {
+    "image_originale": {
+      "nom_image": "doc_1.png",
+      "resolution": "736x1017",
+      "taille_ko": 174.51,
+      "type_detecte": "document",
+      "format_original": "PNG",
+      "entropie": 1.4304,
+      "densite_contours": 60288,
+      "contient_texte": true
+    },
+    "decision_ia": {
+      "format_choisi": "WEBP",
+      "qualite_choisie": 90,
+      "justification": "—",
+      "source": "—",
+      "decision_pertinente": false,
+      "niveau_pertinence": "Moyenne"
+    },
+    "metriques_qualite": {
+      "1_psnr_db": 46.66,
+      "2_ssim": 0.9974,
+      "3_mse": 1.4015,
+      "4_taux_compression_pct": 82.14,
+      "5_ratio_qualite_taille": 0.927,
+      "evaluation": "Excellent",
+      "interpretation": {
+        "psnr": "Très bonne qualité",
+        "ssim": "Structure préservée",
+        "mse": "Faible erreur",
+        "gain": "Excellent"
+      }
+    },
+    "compression_appliquee": {
+      "taille_originale_ko": 174.51,
+      "taille_compressee_ko": 31.17,
+      "ratio_compression": 5.6,
+      "gain_pourcentage": 82.14,
+      "format_utilise": "WEBP",
+      "qualite_utilisee": 85,
+      "qualite_ajustee": false,
+      "nb_retries": 0
+    },
+    "analyse_categorie": {
+      "type": "document",
+      "recommandation_theorique": "WebP qualité 85",
+      "recommandation_appliquee": "WEBP q=90",
+      "pertinence": "Moyenne",
+      "respecte_recommandation": false
+    },
+    "fichiers_generes": {
+      "metrics_chart": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\doc_1_20260322_135248\\metrics_chart.png",
+      "compressed_image": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\doc_1_20260322_135248\\doc_1_compressed.webp"
+    },
+    "conclusion": "Compression Excellent — 82.1% économisé. PSNR=46.66 dB | SSIM=0.9974 | MSE=1.40. Décision IA moyenne — ✗ à revoir.",
+    "date_analyse": "2026-03-22 13:52:49"
+  }
+}

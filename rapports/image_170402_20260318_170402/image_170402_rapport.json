@@ -1,0 +1,59 @@
+{
+  "rapport_compression": {
+    "image_originale": {
+      "nom_image": "image_170402",
+      "resolution": "384x256",
+      "taille_ko": 23.36,
+      "type_detecte": "photo",
+      "format_original": "JPEG",
+      "entropie": 7.6509,
+      "densite_contours": 22841,
+      "contient_texte": false
+    },
+    "decision_ia": {
+      "format_choisi": "WEBP",
+      "qualite_choisie": 85,
+      "justification": "Sélectionné par Comparateur — meilleur ratio Q/T (0.6701) parmi 2 stratégies testées",
+      "source": "Comparateur (validé)",
+      "decision_pertinente": true,
+      "niveau_pertinence": "Élevée"
+    },
+    "metriques_qualite": {
+      "1_psnr_db": 39.23,
+      "2_ssim": 0.9766,
+      "3_mse": 7.7632,
+      "4_taux_compression_pct": 21.03,
+      "5_ratio_qualite_taille": 0.6701,
+      "evaluation": "Excellent",
+      "interpretation": {
+        "psnr": "Très bonne qualité",
+        "ssim": "Structure préservée",
+        "mse": "Faible erreur",
+        "gain": "Faible"
+      }
+    },
+    "compression_appliquee": {
+      "taille_originale_ko": 23.36,
+      "taille_compressee_ko": 18.45,
+      "ratio_compression": 1.27,
+      "gain_pourcentage": 21.03,
+      "format_utilise": "WEBP",
+      "qualite_utilisee": 85,
+      "qualite_ajustee": false,
+      "nb_retries": 0
+    },
+    "analyse_categorie": {
+      "type": "photo",
+      "recommandation_theorique": "JPEG qualité 85-90 (bon compromis)",
+      "recommandation_appliquee": "WEBP q=85",
+      "pertinence": "Élevée",
+      "respecte_recommandation": true
+    },
+    "fichiers_generes": {
+      "gauge": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\image_170402_20260318_170402\\ssim_gauge.png",
+      "metrics_chart": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\image_170402_20260318_170402\\metrics_chart.png"
+    },
+    "conclusion": "Compression Excellent — 21.0% économisé. PSNR=39.23 dB | SSIM=0.9766 | MSE=7.76. Décision IA élevée — ✓ pertinente.",
+    "date_analyse": "2026-03-18 17:04:03"
+  }
+}

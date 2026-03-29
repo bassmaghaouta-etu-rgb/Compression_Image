@@ -1,0 +1,191 @@
+{
+  "image": "17.jpg",
+  "categorie": "photos",
+  "chemin": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\images_test\\photos\\17.jpg",
+  "analyse": {
+    "contours": {
+      "nettete": 1513.59,
+      "nombre_contours": 10853
+    },
+    "features_statistiques": {
+      "contrast": 229213165.4858,
+      "energy": 4673884744.0969,
+      "entropy": 4.1137,
+      "homogenity": 69538.8143,
+      "variance": 1437.1324
+    },
+    "glcm": {
+      "glcm_0deg": {
+        "contrast": 210.9229,
+        "energy": 0.213342,
+        "entropy": 4.889,
+        "homogeneity": 0.7612
+      },
+      "glcm_90deg": {
+        "contrast": 1080.4782,
+        "energy": 0.199671,
+        "entropy": 5.0706,
+        "homogeneity": 0.6926
+      }
+    },
+    "histogramme_rgb": {
+      "bleu": {
+        "ecart_type": 52.48,
+        "max": 252,
+        "min": 0,
+        "moyenne": 203.09
+      },
+      "couleur_moyenne": [
+        220.65,
+        214.01,
+        203.09
+      ],
+      "rouge": {
+        "ecart_type": 26.95,
+        "max": 255,
+        "min": 3,
+        "moyenne": 220.65
+      },
+      "vert": {
+        "ecart_type": 42.04,
+        "max": 254,
+        "min": 0,
+        "moyenne": 214.01
+      }
+    },
+    "image": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\images_test\\photos\\17.jpg",
+    "metadonnees": {
+      "extension": ".jpg",
+      "format": "JPEG",
+      "hauteur": 256,
+      "largeur": 384,
+      "mode": "RGB",
+      "nom_fichier": "17.jpg",
+      "nombre_pixels": 98304,
+      "taille_kb": 12.41
+    },
+    "morphologie": {
+      "pixels_contours_morpho": 5856,
+      "ratio_complexite": 0.0635
+    },
+    "ocr": {
+      "contient_texte": false,
+      "nombre_mots": 0,
+      "texte_extrait": "Erreur OCR: C:\\Program Files\\Tesseract-OCR\\tesseract.exe is not installed or it's not in your PATH. See README file for more information."
+    },
+    "type_image": "screenshot"
+  },
+  "decision_initiale": {
+    "format": "WEBP",
+    "quality": 85,
+    "justification": "Par défaut",
+    "source": "règles locales"
+  },
+  "comparaison_strategies": {
+    "JPEG_q85": {
+      "compressed_size_kb": 11.73,
+      "evaluation": "Excellent",
+      "format": "JPEG",
+      "mse": 0.8063,
+      "psnr_db": 49.07,
+      "quality": 85,
+      "ratio_qualite_taille": 0.6201,
+      "ssim": 0.9971,
+      "taux_compression_pct": 5.47
+    },
+    "WEBP_q85": {
+      "compressed_size_kb": 8.43,
+      "evaluation": "Excellent",
+      "format": "WEBP",
+      "mse": 4.7602,
+      "psnr_db": 41.35,
+      "quality": 85,
+      "ratio_qualite_taille": 0.7196,
+      "ssim": 0.9852,
+      "taux_compression_pct": 32.11
+    }
+  },
+  "decision_finale": {
+    "format": "WEBP",
+    "justification": "Sélectionné par Comparateur — meilleur ratio Q/T (0.7196) parmi 2 stratégies testées",
+    "quality": 85,
+    "source": "Comparateur (validé)"
+  },
+  "metriques": {
+    "compressed_size_kb": 8.43,
+    "compression_ratio": 1.47,
+    "evaluation_qualite": "Excellent",
+    "format_used": "WEBP",
+    "mse": 4.7602,
+    "original_size_kb": 12.41,
+    "psnr_db": 41.35,
+    "quality_adjusted": false,
+    "quality_used": 85,
+    "ratio_qualite_taille": 0.7196,
+    "retry_count": 0,
+    "space_saved_percent": 32.1,
+    "ssim": 0.9852,
+    "taux_compression_pct": 32.11
+  },
+  "rapport_final": {
+    "rapport_compression": {
+      "analyse_categorie": {
+        "pertinence": "Élevée",
+        "recommandation_appliquee": "WEBP q=85",
+        "recommandation_theorique": "PNG ou WebP sans perte (conserve les détails)",
+        "respecte_recommandation": true,
+        "type": "screenshot"
+      },
+      "compression_appliquee": {
+        "format_utilise": "WEBP",
+        "gain_pourcentage": 32.11,
+        "nb_retries": 0,
+        "qualite_ajustee": false,
+        "qualite_utilisee": 85,
+        "ratio_compression": 1.47,
+        "taille_compressee_ko": 8.43,
+        "taille_originale_ko": 12.41
+      },
+      "conclusion": "Compression Excellent — 32.1% économisé. PSNR=41.35 dB | SSIM=0.9852 | MSE=4.76. Décision IA élevée — ✓ pertinente.",
+      "date_analyse": "2026-03-18 17:30:45",
+      "decision_ia": {
+        "decision_pertinente": true,
+        "format_choisi": "WEBP",
+        "justification": "Sélectionné par Comparateur — meilleur ratio Q/T (0.7196) parmi 2 stratégies testées",
+        "niveau_pertinence": "Élevée",
+        "qualite_choisie": 85,
+        "source": "Comparateur (validé)"
+      },
+      "fichiers_generes": {
+        "gauge": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\image_173044_20260318_173044\\ssim_gauge.png",
+        "metrics_chart": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\image_173044_20260318_173044\\metrics_chart.png",
+        "rapport_json": "C:\\Users\\Lenovo ThinkPad T470\\OneDrive\\Documents\\Bureau\\Projet_Compression\\rapports\\image_173044_20260318_173044\\image_173044_rapport.json"
+      },
+      "image_originale": {
+        "contient_texte": false,
+        "densite_contours": 10853,
+        "entropie": 4.1137,
+        "format_original": "JPEG",
+        "nom_image": "image_173044",
+        "resolution": "384x256",
+        "taille_ko": 12.41,
+        "type_detecte": "screenshot"
+      },
+      "metriques_qualite": {
+        "1_psnr_db": 41.35,
+        "2_ssim": 0.9852,
+        "3_mse": 4.7602,
+        "4_taux_compression_pct": 32.11,
+        "5_ratio_qualite_taille": 0.7196,
+        "evaluation": "Excellent",
+        "interpretation": {
+          "gain": "Bon",
+          "mse": "Faible erreur",
+          "psnr": "Très bonne qualité",
+          "ssim": "Structure préservée"
+        }
+      }
+    }
+  },
+  "decision_changee_par_comparateur": false
+}
